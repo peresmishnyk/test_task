@@ -1,0 +1,39 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+    <div class="container">
+        <div class="text-center mt-5">
+            <h1>Dataset Ready</h1>
+            <p class="lead">Permalink <a href="{{ permalink }}">{{ permalink }}</a></p>
+        </div>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Total Duration</th>
+                <th scope="col">Total Calls</th>
+                <th scope="col">Some Continent Duration</th>
+                <th scope="col">Some Continent Calls</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for row in report %}
+            <tr>
+                <th scope="row">{{ row.customerId }}</th>
+                <td>{{ row.totalDuration }}</td>
+                <td>{{ row.totalCount }}</td>
+                <td>{{ row.sameDuration }}</td>
+                <td>{{ row.sameCount }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+
+    </script>
+{% endblock %}

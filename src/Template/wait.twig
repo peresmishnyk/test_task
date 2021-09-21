@@ -1,0 +1,26 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+    <div class="container">
+        <div class="text-center mt-5">
+            <h1>Dataset Prepare</h1>
+            <p class="lead">Please be patient. Complete {{ percentage }}%</p>
+            <p>If no progress - may be ipstack API limit riched :) Just change API key. Yes, i know about bulk lookup.</p>
+        </div>
+        <div class="progress">
+            <div class="progress-bar" role="progressbar" style="width: {{ percentage }}%" aria-valuenow="{{ percentage }}" aria-valuemin="0"
+                 aria-valuemax="100"></div>
+        </div>
+        <script>
+            setTimeout(function () {
+                location.reload()
+            }, 1000)
+        </script>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+
+    </script>
+{% endblock %}

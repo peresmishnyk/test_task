@@ -1,0 +1,103 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+    <div class="container">
+        <div class="text-center mt-5">
+            <h1>Submit New Dataset</h1>
+            <p class="lead">You can upload local file, download from url or send plain text</p>
+            <p>run ./task in terminal for console version usage</p>
+        </div>
+
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" id="myTab">
+            <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#" data-bs-target="#tab-upload">Upload file</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-bs-target="#tab-download">Download from url</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-bs-target="#tab-plain">Submit text</a>
+            </li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div class="tab-pane active" id="tab-upload" role="tabpanel" aria-labelledby="upload-tab">
+                <form class="p-3 pt-4" method="post" action="{{ route('upload') }}" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="" class="form-label">File</label>
+                        <input type="file" class="form-control" id="fileInput" name="file"
+                               aria-describedby="uploadHelp">
+                        <div id="uploadHelp" class="form-text">Your can download test file here <a
+                                    href="{{ route('demo') }}">cdrs.csv</a></div>
+                    </div>
+                    <div class="pt-3">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+            <div class="tab-pane" id="tab-download" role="tabpanel" aria-labelledby="download-tab">
+                <form class="p-3 pt-4" method="post" action="{{ route('download') }}" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="" class="form-label">Url</label>
+                        <input type="text" class="form-control" id="urlInput" name="url" aria-describedby="uploadHelp">
+                        <div id="downloadHelp" class="form-text">Set demo url to <a href="#"
+                                                                                    onclick="return set_demo_url();">test
+                                file</a></div>
+                    </div>
+                    <div class="pt-3">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+            <div class="tab-pane" id="tab-plain" role="tabpanel" aria-labelledby="plain-tab">
+                <form class="p-3 pt-4" method="post" action="{{ route('plain') }}">
+                    <div class="mb-3">
+                        <label for="" class="form-label">Plain text</label>
+                        <textarea class="form-control" id="plainInput" name="plain"
+                                  aria-describedby="uploadHelp"></textarea>
+                        <div id="uploadHelp" class="form-text"><a href="#" onclick="return set_demo_data();">Load test
+                                data</a></div>
+                    </div>
+                    <div class="pt-3">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block menu %}
+    <li class="nav-item"><a class="nav-link active" aria-current="page" href="{{ route('index') }}">Submit new</a></li>
+    <li class="nav-item"><a class="nav-link" href="{{ route('all') }}">Show all</a></li>
+{% endblock %}
+
+{% block script %}
+    <script>
+        var triggerTabList = [].slice.call(document.querySelectorAll('#myTab a'))
+        triggerTabList.forEach(function (triggerEl) {
+            var tabTrigger = new bootstrap.Tab(triggerEl)
+
+            triggerEl.addEventListener('click', function (event) {
+                event.preventDefault()
+                tabTrigger.show()
+            })
+        })
+
+        function set_demo_url() {
+            let protocol = location.protocol;
+            let host = location.host;
+            $('#urlInput').val(protocol + '//' + host + "{{ route('demo') }}");
+            return false;
+        }
+
+        function set_demo_data() {
+            $.get('{{ route('demo') }}', function (data) {
+                $('#plainInput').val(data)
+            })
+            return false;
+        }
+    </script>
+{% endblock %}

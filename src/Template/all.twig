@@ -1,0 +1,46 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+    <div class="container">
+        <div class="text-center mt-5">
+            <h1>All Prepared Dataset</h1>
+            {% if( uuids|length == 0) %}
+                <p class="lead">Just empty. No one dataset</p>
+            {% else %}
+                <p class="lead">Has {{ uuids|length }} dataset</p>
+            {% endif %}
+        </div>
+        {% if(uuids|length) %}
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">uuid</th>
+                    <th scope="col">link</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for row in uuids %}
+                    <tr>
+                        <th scope="row">{{ row.uuid }}</th>
+                        <td><a href="{{ route('show', {'uuid':row.uuid}) }}">Show</a></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+
+        {% endif %}
+
+    </div>
+{% endblock %}
+
+{% block menu %}
+    <li class="nav-item"><a class="nav-link" aria-current="page" href="{{ route('index') }}">Submit new</a></li>
+    <li class="nav-item"><a class="nav-link active" href="{{ route('all') }}">Show all</a></li>
+{% endblock %}
+
+{% block script %}
+    <script>
+
+    </script>
+{% endblock %}

@@ -1,0 +1,107 @@
+#!/usr/bin/env php
+<?php
+
+require "vendor/autoload.php";
+
+$app = app();
+
+$climate = new League\CLImate\CLImate();
+
+$climate->description('MyTower PHP test');
+
+$climate->arguments->add([
+    'command' => [
+        'prefix' => 'c',
+        'longPrefix' => 'command',
+        'description' => 'Console command [download|parse|report]',
+        'required' => true,
+    ]
+]);
+
+try {
+    $climate->arguments->parse();
+} catch (Exception $e) {
+    $climate->red($e->getMessage());
+    $climate->br();
+    $climate->usage();
+}
+
+switch ($climate->arguments->get('command')) {
+    case 'download':
+        $climate->arguments->add([
+            'source' => [
+                'prefix' => 's',
+                'longPrefix' => 'source',
+                'description' => 'Data source. Local file or remote URL',
+                'required' => true,
+            ],
+            'uuid' => [
+                'prefix' => 'u',
+                'longPrefix' => 'uuid',
+                'description' => 'UUID file',
+                'defaultValue' => uuid_v4(),
+            ],
+        ]);
+        try {
+            $climate->arguments->parse();
+            $source = $climate->arguments->get('source');
+            $uuid = $climate->arguments->get('uuid');
+            $uuid = \Peresmishnyk\Task\Console\ConsoleCommand::download($source, $uuid);
+            $climate->out('Data transfered. File uuid is [' . $uuid . ']');
+            $climate->inline('Start parsing... ');
+            $uuid = \Peresmishnyk\Task\Console\ConsoleCommand::parse($uuid);
+            $climate->out('Completed.');
+            $report = \Peresmishnyk\Task\Console\ConsoleCommand::report($uuid);
+            $climate->table($report);
+        } catch (Exception $e) {
+            $climate->red($e->getMessage());
+            $climate->br();
+            $climate->usage();
+        }
+        break;
+    case 'parse':
+        $climate->arguments->add([
+            'uuid' => [
+                'prefix' => 'u',
+                'longPrefix' => 'uuid',
+                'description' => 'UUID file for parse',
+                'required' => true,
+            ],
+        ]);
+        try {
+            $climate->arguments->parse();
+            $uuid = $climate->arguments->get('uuid');
+            $climate->out($uuid);
+            $uuid = \Peresmishnyk\Task\Console\ConsoleCommand::parse($uuid);
+        } catch (Exception $e) {
+            $climate->red($e->getMessage());
+            $climate->br();
+            $climate->usage();
+        }
+        break;
+    case 'report':
+        $climate->arguments->add([
+            'uuid' => [
+                'prefix' => 'u',
+                'longPrefix' => 'uuid',
+                'description' => 'UUID for report',
+                'required' => true,
+            ],
+        ]);
+        try {
+            $climate->arguments->parse();
+            $uuid = $climate->arguments->get('uuid');
+            if (!app()->service('filestorage')->checkFileExists($uuid)) {
+                $climate->error('UUID not found!');
+                return;
+            }
+            $report = \Peresmishnyk\Task\Console\ConsoleCommand::report($uuid);
+            $climate->table($report);
+        } catch (Exception $e) {
+            $climate->red($e->getMessage());
+            $climate->br();
+            $climate->usage();
+        }
+        break;
+}
+
